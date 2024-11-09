@@ -92,6 +92,6 @@ public class LoginGuardianAddedProcessor : LoginGuardianProcessorBase<LoginGuard
 
     protected override async Task HandlerTransactionIndexAsync(LoginGuardianAdded eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

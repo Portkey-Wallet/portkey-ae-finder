@@ -50,7 +50,8 @@ public class TransferLimitChangedProcessor : CAHolderTransactionEventBase<Transf
             FromAddress = caAddress.ToBase58(),
             TransactionFee = transactionFee,
             TransactionId = context.Transaction.TransactionId,
-            Status = context.Transaction.Status
+            Status = context.Transaction.Status,
+            Platform = logEvent.Platform
         };
 
         transIndex.MethodName = context.Transaction.MethodName;

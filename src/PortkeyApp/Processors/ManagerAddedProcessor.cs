@@ -40,7 +40,7 @@ public class ManagerAddedProcessor : CAHolderManagerProcessorBase<ManagerInfoAdd
         }
 
         await SaveEntityAsync(caHolderManagerIndex);
-        
+
         //check ca address if already exist in caHolderIndex
         var indexId = IdGenerateHelper.GetId(context.ChainId, logEvent.CaAddress.ToBase58());
         var caHolderIndex = await GetEntityAsync<CAHolderIndex>(indexId);
@@ -65,6 +65,6 @@ public class ManagerAddedProcessor : CAHolderManagerProcessorBase<ManagerInfoAdd
 
     protected override async Task HandlerTransactionIndexAsync(ManagerInfoAdded eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());;
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

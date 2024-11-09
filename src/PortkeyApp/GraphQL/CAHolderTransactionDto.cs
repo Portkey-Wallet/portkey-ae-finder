@@ -16,18 +16,13 @@ public class CAHolderTransactionDto
     public string? PreviousBlockHash { get; set; }
     
     public string TransactionId { get; set; }
-    /// <summary>
-    /// Method name
-    /// </summary>
+
     public string MethodName { get; set; }
       
     public TokenInfoDto? TokenInfo { get; set; }
     
     public NFTItemInfoDto? NftInfo { get; set; }
-
-    // [Name("nftInfo")]
-    // public NFTInfo NFTInfo { get; set; }
-      
+    
     public TransactionStatus Status { get; set; }
 
     public long Timestamp { get; set; }
@@ -42,6 +37,8 @@ public class CAHolderTransactionDto
 
     public List<TransactionFee>? TransactionFees { get; set; }
     public bool IsManagerConsumer { get; set; } = false;
+    
+    public int? Platform { get; set; }
 }
 
 public class TokenTransferInfoDto

@@ -1,4 +1,3 @@
-using AeFinder.Sdk.Processor;
 using AElf.Contracts.MultiToken;
 using AElf.Contracts.NFT;
 using PortkeyApp.Entities;
@@ -14,35 +13,13 @@ public class PortkeyAppProfile : Profile
 {
     public PortkeyAppProfile()
     {
-        CreateMap<MyEntity, MyEntityDto>();
         CreateMap<TokenCreated, TokenInfoIndex>().Ignore(t => t.Issuer);
         CreateMap<TokenCreated, NFTCollectionInfoIndex>().Ignore(t => t.Issuer);
         //CreateMap<Provider.TokenInfoDto, NFTCollectionInfoIndex>();
         CreateMap<TokenCreated, NFTInfoIndex>().Ignore(t => t.Issuer);
         // CreateMap<Provider.TokenInfoDto, NFTInfoIndex>();
         // CreateMap<Provider.TokenInfoDto, TokenInfoIndex>();
-
-        // CreateMap<LogEventContext, TokenInfoIndex>();
-        // CreateMap<LogEventContext, NFTCollectionInfoIndex>();
-        // CreateMap<LogEventContext, NFTInfoIndex>();
-        // CreateMap<LogEventContext, LoginGuardianIndex>();
-        // CreateMap<LogEventContext, LoginGuardianChangeRecordIndex>();
-        //
-        // CreateMap<LogEventContext, CAHolderNFTCollectionBalanceIndex>();
-        // CreateMap<LogEventContext, CAHolderNFTBalanceIndex>();
-        // CreateMap<LogEventContext, CAHolderTokenBalanceIndex>();
-        //
-        // CreateMap<LogEventContext, CompatibleCrossChainTransferIndex>();
-        // CreateMap<LogEventContext, CAHolderTransactionAddressIndex>();
-        // CreateMap<LogEventContext, CAHolderManagerChangeRecordIndex>();
-        // CreateMap<LogEventContext, CAHolderSearchTokenNFTIndex>();
-        //
-        // CreateMap<LogEventContext, TransactionFeeChangedIndex>();
         CreateMap<TransactionFeeCharged, TransactionFeeChangedIndex>();
-        // CreateMap<LogEventContext, GuardianChangeRecordIndex>();
-        // CreateMap<LogEventContext, TransferLimitIndex>();
-        // CreateMap<LogEventContext, TransferSecurityThresholdIndex>();
-        // CreateMap<LogEventContext, TransactionFeeChangedIndex>();
         CreateMap<TransactionFeeCharged, TransactionFeeChangedIndex>();
 
         CreateMap<TokenInfo, TokenInfoIndex>()
@@ -115,9 +92,6 @@ public class PortkeyAppProfile : Profile
         CreateMap<Guardian, GuardianDto>();
         CreateMap<BingoGameIndex, BingoInfo>();
         CreateMap<BingoGameStaticsIndex, BingoStatics>();
-        // CreateMap<LogEventContext, BingoGameIndex>();
-        // CreateMap<LogEventContext, BingoGameStaticsIndex>();
-        // CreateMap<LogEventContext, CAHolderTokenApprovedIndex>();
         CreateMap<CAHolderTokenApprovedIndex, CAHolderTokenApprovedDto>()
             .ForMember(t => t.ChainId, m => m.MapFrom(f => f.Metadata.ChainId));
         CreateMap<CAHolderIndex, CAHolderInfoDto>().ForMember(d => d.GuardianList,
@@ -132,15 +106,12 @@ public class PortkeyAppProfile : Profile
         CreateMap<TransferLimitIndex, CAHolderTransferlimitDto>()
             .ForMember(t => t.ChainId, m => m.MapFrom(f => f.Metadata.ChainId));
         CreateMap<TransferSecurityThresholdIndex, TransferSecurityThresholdDto>();
-        //CreateMap<LogEventContext, TransferLimitIndex>();
         CreateMap<ManagerApprovedIndex, CAHolderManagerApprovedDto>()
             .ForMember(t => t.ChainId, m => m.MapFrom(f => f.Metadata.ChainId))
             .ForMember(t => t.BlockHeight, m => m.MapFrom(f => f.Metadata.Block.BlockHeight));
-        //CreateMap<LogEventContext, ManagerApprovedIndex>();
         CreateMap<GuardianChangeRecordIndex, GuardianChangeRecordDto>()
             .ForMember(t => t.BlockHash, m => m.MapFrom(f => f.Metadata.Block.BlockHash))
             .ForMember(t => t.BlockHeight, m => m.MapFrom(f => f.Metadata.Block.BlockHeight));
-        //CreateMap<LogEventContext, InviteIndex>();
         CreateMap<InviteIndex, ReferralInfoDto>();
         CreateMap<NftExternalInfo, NFTCollectionInfoIndex>();
         CreateMap<NftExternalInfo, NFTInfoIndex>();

@@ -1,4 +1,3 @@
-using System.Linq.Dynamic.Core;
 using AeFinder.Sdk;
 using PortkeyApp.Entities;
 using GraphQL;
@@ -9,25 +8,6 @@ namespace PortkeyApp.GraphQL;
 
 public class Query
 {
-    public static async Task<List<MyEntityDto>> MyEntity(
-        [FromServices] IReadOnlyRepository<MyEntity> repository,
-        [FromServices] IObjectMapper objectMapper,
-        GetMyEntityInput input)
-    {
-        var queryable = await repository.GetQueryableAsync();
-
-        queryable = queryable.Where(a => a.Metadata.ChainId == input.ChainId);
-
-        if (!input.Address.IsNullOrWhiteSpace())
-        {
-            queryable = queryable.Where(a => a.Address == input.Address);
-        }
-
-        var accounts = queryable.ToList();
-
-        return objectMapper.Map<List<MyEntity>, List<MyEntityDto>>(accounts);
-    }
-
     public static async Task<List<TokenInfoDto>> TokenInfo(
         [FromServices] IReadOnlyRepository<TokenInfoIndex> repository,
         [FromServices] IObjectMapper objectMapper, GetTokenInfoDto? dto)

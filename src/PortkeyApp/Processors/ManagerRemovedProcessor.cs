@@ -6,7 +6,7 @@ using PortkeyApp.Entities;
 
 namespace PortkeyApp.Processors;
 
-public class ManagerRemovedProcessor: CAHolderManagerProcessorBase<ManagerInfoRemoved>
+public class ManagerRemovedProcessor : CAHolderManagerProcessorBase<ManagerInfoRemoved>
 {
     public override string GetContractAddress(string chainId)
     {
@@ -35,7 +35,7 @@ public class ManagerRemovedProcessor: CAHolderManagerProcessorBase<ManagerInfoRe
                 await SaveEntityAsync(caHolderManagerIndex);
             }
         }
-        
+
         //check ca address if already exist in caHolderIndex
         var indexId = IdGenerateHelper.GetId(context.ChainId, logEvent.CaAddress.ToBase58());
         var caHolderIndex = await GetEntityAsync<CAHolderIndex>(indexId);
@@ -49,14 +49,14 @@ public class ManagerRemovedProcessor: CAHolderManagerProcessorBase<ManagerInfoRe
         {
             caHolderIndex.ManagerInfos.Remove(item);
         }
-        
+
         await SaveEntityAsync(caHolderIndex);
         await AddChangeRecordAsync(logEvent.CaAddress.ToBase58(), logEvent.CaHash.ToHex(),
             logEvent.Manager.ToBase58(), nameof(ManagerInfoRemoved), context);
     }
-    
+
     protected override async Task HandlerTransactionIndexAsync(ManagerInfoRemoved eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());;
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }
