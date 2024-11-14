@@ -200,7 +200,7 @@ public class Query
         var expression = GetTwoCaHolderQueryExpression(dto.CAAddressInfos[0], dto.CAAddressInfos[1]);
         queryable = queryable.Where(expression);
 
-        var result = queryable.OrderByDescending(t => t.Timestamp).Take(dto.SkipCount).Take(dto.MaxResultCount)
+        var result = queryable.OrderByDescending(t => t.Timestamp).Skip(dto.SkipCount).Take(dto.MaxResultCount)
             .ToList();
 
         return new CAHolderTransactionPageResultDto
