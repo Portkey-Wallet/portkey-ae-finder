@@ -3,6 +3,7 @@ using AElf.Contracts.NFT;
 using PortkeyApp.Entities;
 using PortkeyApp.GraphQL;
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using PortkeyApp.Configs;
 using Volo.Abp.AutoMapper;
 using TransactionFee = PortkeyApp.GraphQL.TransactionFee;
@@ -93,7 +94,8 @@ public class PortkeyAppProfile : Profile
         CreateMap<BingoGameIndex, BingoInfo>();
         CreateMap<BingoGameStaticsIndex, BingoStatics>();
         CreateMap<CAHolderTokenApprovedIndex, CAHolderTokenApprovedDto>()
-            .ForMember(t => t.ChainId, m => m.MapFrom(f => f.Metadata.ChainId));
+            .ForMember(t => t.ChainId, m => m.MapFrom(f => f.Metadata.ChainId))
+            .ForMember(t => t.UpdateTime, m => m.MapFrom(f => f.Metadata.Block.BlockTime.ToTimestamp().Seconds));
         CreateMap<CAHolderIndex, CAHolderInfoDto>().ForMember(d => d.GuardianList,
                 opt => opt.MapFrom(e =>
                     e.Guardians.IsNullOrEmpty() ? null : new GuardianList { Guardians = e.Guardians }))
