@@ -63,7 +63,10 @@ public class Query
 
         if (!dto.Symbol.IsNullOrEmpty())
         {
-            queryable = queryable.Where(t => t.NftInfo.Symbol == dto.Symbol || t.TokenInfo.Symbol == dto.Symbol);
+            queryable = queryable.Where(t =>
+                t.NftInfo.Symbol == dto.Symbol || t.TokenInfo.Symbol == dto.Symbol ||
+                t.TokenTransferInfos.Any(f => f.TokenInfo.Symbol == dto.Symbol) ||
+                t.TokenTransferInfos.Any(f => f.NftInfo.Symbol == dto.Symbol));
         }
 
         if (!dto.BlockHash.IsNullOrEmpty())
@@ -428,12 +431,6 @@ public class Query
             .Skip(dto.SkipCount)
             .Take(dto.MaxResultCount).ToList();
 
-        // temp
-        // var result = queryable.OrderBy(t => t.NftCollectionInfo.Symbol).ThenBy(t => t.Metadata.ChainId)
-        //     .Skip(IndexerConstant.DefaultSkip)
-        //     .Take(IndexerConstant.DefaultLimit).ToList().Where(t => !t.TokenIds.IsNullOrEmpty()).Skip(dto.SkipCount)
-        //     .Take(dto.MaxResultCount).ToList();
-
         var dataList =
             objectMapper
                 .Map<List<CAHolderNFTCollectionBalanceIndex>, List<CAHolderNFTCollectionBalanceInfoDto>>(result);
@@ -641,10 +638,10 @@ public class Query
         if (!string.IsNullOrEmpty(dto.SearchWord))
         {
             //long.TryParse(dto.SearchWord, out long tokenId);
-
+            var searchWord = dto.SearchWord.ToUpper().Trim();
             queryable = queryable.Where(t =>
-                t.TokenInfo.Symbol.Contains(dto.SearchWord) || t.NftInfo.Symbol.Contains(dto.SearchWord) ||
-                t.TokenInfo.TokenName.Contains(dto.SearchWord) || t.NftInfo.TokenName.Contains(dto.SearchWord));
+                t.TokenInfo.Symbol.Contains(searchWord) || t.NftInfo.Symbol.Contains(searchWord) ||
+                t.TokenInfo.TokenName.Contains(searchWord) || t.NftInfo.TokenName.Contains(searchWord));
         }
 
         var result = queryable.OrderBy(t => t.NftInfo.Symbol).ThenBy(t => t.Metadata.ChainId)
