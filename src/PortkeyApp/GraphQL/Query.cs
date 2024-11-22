@@ -944,6 +944,24 @@ public class Query
         return objectMapper.Map<List<NFTInfoIndex>, List<NFTItemInfoDto>>(result);
     }
 
+    [Name("nftItemWithTraitsInfos")]
+    public static async Task<List<NFTItemInfoDto>> GetNftItemWithTraitsInfosAsync(
+        [FromServices] IReadOnlyRepository<NFTInfoIndex> repository,
+        [FromServices] IObjectMapper objectMapper, GetNftItemWithTraitsInfosDto? dto)
+    {
+        var queryable = await repository.GetQueryableAsync();
+
+        //todo: Since the TraitsLength field was added later, it can only be used after scan from beginning.
+        //queryable = queryable.Where(t => t.TraitsLength > 0);
+        queryable = queryable.OrderBy(t => t.Symbol);
+
+        var nftInfos = dto.Symbol.IsNullOrEmpty()
+            ? queryable.Skip(dto.SkipCount).Take(dto.MaxResultCount).ToList()
+            : queryable.After(new object[] { dto.Symbol }).Take(dto.MaxResultCount).ToList();
+
+        return objectMapper.Map<List<NFTInfoIndex>, List<NFTItemInfoDto>>(nftInfos);
+    }
+
     [Name("caHolderTokenApproved")]
     public static async Task<CAHolderTokenApprovedPageResultDto> CAHolderTokenApprovedAsync(
         [FromServices] IReadOnlyRepository<CAHolderTokenApprovedIndex> repository,

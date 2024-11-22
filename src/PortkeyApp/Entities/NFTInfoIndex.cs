@@ -22,4 +22,5 @@ public class NFTInfoIndex : TokenInfoBase, IAeFinderEntity
     [Keyword] public string SeedOwnedSymbol { get; set; }
     
     [Keyword] public string Expires { get; set; }
+    public int TraitsLength => Traits == null ? 0 : Traits.Length;
 }
