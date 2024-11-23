@@ -953,6 +953,11 @@ public class Query
 
         //todo: Since the TraitsLength field was added later, it can only be used after scan from beginning.
         //queryable = queryable.Where(t => t.TraitsLength > 0);
+        if (!dto.CollectionSymbol.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.CollectionSymbol == dto.CollectionSymbol);
+        }
+
         queryable = queryable.OrderBy(t => t.Symbol);
 
         var nftInfos = dto.Symbol.IsNullOrEmpty()
