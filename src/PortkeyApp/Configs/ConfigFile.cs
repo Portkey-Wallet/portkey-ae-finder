@@ -479,6 +479,14 @@ public static partial class ConfigFile
     {
       "ChainId": "AELF",
       "ContractAddress": "JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE",
+      "MethodName": ".CrossChainTransfer",
+      "EventNames": [
+        "CrossChainTransferred"
+      ]
+    },
+    {
+      "ChainId": "AELF",
+      "ContractAddress": "JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE",
       "MethodName": "CrossChainReceiveToken",
       "EventNames": [
         "CrossChainReceived"
@@ -554,6 +562,7 @@ public static partial class ConfigFile
       "MethodName": "ManagerForwardCall",
       "EventNames": [
         "CrossChainTransferred",
+        ".CrossChainTransferred",
         "CrossChainReceived",
         "Transferred",
         "GuardianAdded",
@@ -712,6 +721,14 @@ public static partial class ConfigFile
     {
       "ChainId": "tDVW",
       "ContractAddress": "ASh2Wt7nSEmYqnGxPPzp4pnVDU4uhj1XW9Se5VeZcX2UDdyjx",
+      "MethodName": ".CrossChainTransfer",
+      "EventNames": [
+        "CrossChainTransferred"
+      ]
+    },
+    {
+      "ChainId": "tDVW",
+      "ContractAddress": "ASh2Wt7nSEmYqnGxPPzp4pnVDU4uhj1XW9Se5VeZcX2UDdyjx",
       "MethodName": "CrossChainReceiveToken",
       "EventNames": [
         "CrossChainReceived"
@@ -787,6 +804,7 @@ public static partial class ConfigFile
       "MethodName": "ManagerForwardCall",
       "EventNames": [
         "CrossChainTransferred",
+        ".CrossChainTransferred",
         "CrossChainReceived",
         "Transferred",
         "GuardianAdded",
