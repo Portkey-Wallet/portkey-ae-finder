@@ -8,7 +8,7 @@ using PortkeyApp.Entities;
 
 namespace PortkeyApp.Processors;
 
-public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBase<CrossChainTransferred>
+public class TokenCrossChainTransferredProcessor : CAHolderTransactionProcessorBase<CrossChainTransferred>
 {
     public override string GetContractAddress(string chainId)
     {
@@ -16,14 +16,23 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
     }
 
     public override async Task ProcessAsync(CrossChainTransferred logEvent, LogEventContext context)
-  {
-        if (!IsValidTransaction(context.ChainId, context.Transaction.To, context.Transaction.MethodName, context.Transaction.Params)) return;
+    {
+        if (!IsValidTransaction(context.ChainId, context.Transaction.To, context.Transaction.MethodName,
+                context.Transaction.Params)) return;
 
-        var toCaHolder = await GetEntityAsync<CAHolderIndex>(IdGenerateHelper.GetId(context.ChainId, logEvent.To.ToBase58()));
-        var fromManager = await GetEntityAsync<CAHolderManagerIndex>(IdGenerateHelper.GetId(
-            context.ChainId, logEvent.From.ToBase58()));
+        var methodName = GetMethodName(context.Transaction.MethodName, context.Transaction.Params);
+        var toCaHolder =
+            await GetEntityAsync<CAHolderIndex>(IdGenerateHelper.GetId(context.ChainId, logEvent.To.ToBase58()));
 
-        if (fromManager == null && toCaHolder == null)
+        var fromCaAddress = methodName == CommonConstants.InlineCrossChainTransfer ? logEvent.From.ToBase58() : string.Empty;
+        if (fromCaAddress.IsNullOrEmpty())
+        {
+            var fromManager = await GetEntityAsync<CAHolderManagerIndex>(IdGenerateHelper.GetId(
+                context.ChainId, logEvent.From.ToBase58()));
+            fromCaAddress = fromManager?.CAAddresses?.FirstOrDefault();
+        }
+
+        if (fromCaAddress.IsNullOrEmpty() && toCaHolder == null)
         {
             return;
         }
@@ -31,11 +40,9 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
         var tokenInfoIndex = await GetTokenInfoIndexFromStateOrChainAsync(logEvent.Symbol, context);
         var nftInfoIndex = await GetNftInfoIndexFromStateOrChainAsync(logEvent.Symbol, context);
 
-        var fromManagerCaAddress = string.Empty;
-        if (fromManager != null)
+        if (!fromCaAddress.IsNullOrEmpty())
         {
-            fromManagerCaAddress = fromManager.CAAddresses.FirstOrDefault();
-            await AddCAHolderTransactionAddressAsync(fromManager.CAAddresses.FirstOrDefault(), logEvent.To.ToBase58(),
+            await AddCAHolderTransactionAddressAsync(fromCaAddress, logEvent.To.ToBase58(),
                 ChainHelper.ConvertChainIdToBase58(logEvent.ToChainId), context);
         }
         else
@@ -44,12 +51,12 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
         }
 
         await SaveEntityAsync(GetCaHolderTransactionIndex(logEvent,
-            tokenInfoIndex, nftInfoIndex, fromManagerCaAddress, context));
+            tokenInfoIndex, nftInfoIndex, fromCaAddress, context));
     }
 
     private CAHolderTransactionIndex GetCaHolderTransactionIndex(CrossChainTransferred transferred,
         TokenInfoIndex tokenInfoIndex,
-        NFTInfoIndex nftInfoIndex, string fromManagerCAAddress, LogEventContext context)
+        NFTInfoIndex nftInfoIndex, string fromCaAddress, LogEventContext context)
     {
         var index = new CAHolderTransactionIndex
         {
@@ -63,7 +70,7 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
             {
                 Amount = transferred.Amount,
                 FromAddress = transferred.From.ToBase58(),
-                FromCAAddress = fromManagerCAAddress,
+                FromCAAddress = fromCaAddress ?? string.Empty,
                 ToAddress = transferred.To.ToBase58(),
                 FromChainId = context.ChainId,
                 ToChainId = ChainHelper.ConvertChainIdToBase58(transferred.ToChainId)
@@ -71,7 +78,7 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
             TransactionId = context.Transaction.TransactionId,
             Status = context.Transaction.Status
         };
-        
+
         index.MethodName = GetMethodName(context.Transaction.MethodName, context.Transaction.Params);
         return index;
     }
@@ -85,7 +92,7 @@ public class TokenCrossChainTransferredProcessor: CAHolderTransactionProcessorBa
             FromAddress = context.Transaction.From,
             ToAddress = context.Transaction.To
         };
-        
+
         await SaveEntityAsync(index);
     }
 }
