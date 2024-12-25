@@ -6,7 +6,7 @@ namespace PortkeyApp.Common;
 
 public class NftExternalInfoHelper
 {
-        public static NftExternalInfo BuildNftExternalInfo(MapField<string, string> externalInfo)
+    public static NftExternalInfo BuildNftExternalInfo(MapField<string, string> externalInfo)
     {
         var nftExternalInfo = new NftExternalInfo();
 
@@ -85,5 +85,10 @@ public class NftExternalInfoHelper
         }
 
         return nftExternalInfo;
+    }
+
+    public static string GetFtImageUrl(MapField<string, string> externalInfo)
+    {
+        return externalInfo.TryGetValue("__ft_image_uri", out var imageUrl) ? imageUrl : string.Empty;
     }
 }

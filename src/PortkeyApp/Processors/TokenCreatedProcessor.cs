@@ -48,6 +48,8 @@ public class TokenCreatedProcessor : LogEventProcessorBase<TokenCreated>
                 tokenInfoIndex.ExternalInfoDictionary = logEvent.ExternalInfo.Value
                     .Where(t => !t.Key.IsNullOrWhiteSpace())
                     .ToDictionary(item => item.Key, item => item.Value);
+                
+                tokenInfoIndex.ImageUrl = NftExternalInfoHelper.GetFtImageUrl(logEvent.ExternalInfo.Value);
             }
 
             tokenInfoIndex.Issuer = GetIssuerAddress(logEvent);
