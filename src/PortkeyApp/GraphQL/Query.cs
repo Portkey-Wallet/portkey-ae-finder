@@ -3,6 +3,7 @@ using PortkeyApp.Entities;
 using GraphQL;
 using Volo.Abp.ObjectMapping;
 using System.Linq.Expressions;
+using PortkeyApp.Common;
 
 namespace PortkeyApp.GraphQL;
 
@@ -257,6 +258,112 @@ public class Query
             t.TransferInfo.ToAddress == fromHolder.CAAddress);
 
         return expression;
+    }
+
+    [Name("caHolderTransactionInfo")]
+    public static async Task<CAHolderTransactionPageResultDto> CAHolderTransactionInfo(
+        [FromServices] IReadOnlyRepository<CAHolderTransactionIndex> repository,
+        [FromServices] IReadOnlyRepository<CompatibleCrossChainTransferIndex>
+            otherCrossChainTransferRepository,
+        [FromServices] IObjectMapper objectMapper, GetCAHolderTransactionInfoDto dto)
+    {
+        var queryable = await repository.GetQueryableAsync();
+
+        if (!dto.ChainId.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.Metadata.ChainId == dto.ChainId);
+        }
+
+        if (dto.StartBlockHeight > 0)
+        {
+            queryable = queryable.Where(t => t.Metadata.Block.BlockHeight >= dto.StartBlockHeight);
+        }
+
+        if (dto.EndBlockHeight > 0)
+        {
+            queryable = queryable.Where(t => t.Metadata.Block.BlockHeight <= dto.EndBlockHeight);
+        }
+
+        if (!dto.Symbol.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.TokenInfo.Symbol == dto.Symbol);
+        }
+
+        if (!dto.BlockHash.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.Metadata.Block.BlockHash == dto.BlockHash);
+        }
+
+        if (!dto.TransactionId.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.TransactionId == dto.TransactionId);
+        }
+
+        if (!dto.TransferTransactionId.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(t => t.TransferInfo.TransferTransactionId == dto.TransferTransactionId);
+        }
+
+        if (!dto.MethodNames.IsNullOrEmpty())
+        {
+            queryable = queryable.Where(
+                dto.MethodNames.Select(name =>
+                        (Expression<Func<CAHolderTransactionIndex, bool>>)(t => t.MethodName == name))
+                    .Aggregate((prev, next) => prev.Or(next)));
+        }
+
+
+        if (!dto.CAAddresses.IsNullOrEmpty())
+        {
+            Expression<Func<CAHolderTransactionIndex, bool>> expression = t => true;
+            foreach (var address in dto.CAAddresses)
+            {
+                expression = expression.Or(t =>
+                    (t.FromAddress == address) ||
+                    (t.TransferInfo != null && t.TransferInfo.FromAddress == address) ||
+                    (t.TransferInfo != null && t.TransferInfo.FromCAAddress == address) ||
+                    (t.TransferInfo != null && t.TransferInfo.ToAddress == address));
+
+                expression = expression.Or(t => t.TokenTransferInfos.Any(f => f.TransferInfo.FromAddress == address));
+                expression = expression.Or(t => t.TokenTransferInfos.Any(f => f.TransferInfo.FromCAAddress == address));
+                expression = expression.Or(t => t.TokenTransferInfos.Any(f => f.TransferInfo.ToAddress == address));
+            }
+
+            queryable = queryable.Where(expression);
+        }
+
+        var result = queryable.OrderByDescending(t => t.Timestamp).Skip(dto.SkipCount).Take(dto.MaxResultCount)
+            .ToList();
+
+        var dataList = objectMapper.Map<List<CAHolderTransactionIndex>, List<CAHolderTransactionDto>>(result);
+        await ExcludeCompatibleCrossChainAsync(dataList, otherCrossChainTransferRepository);
+        var pageResult = new CAHolderTransactionPageResultDto
+        {
+            TotalRecordCount = queryable.Count(),
+            Data = dataList
+        };
+        return pageResult;
+    }
+
+    private static async Task ExcludeCompatibleCrossChainAsync(List<CAHolderTransactionDto> dataList,
+        IReadOnlyRepository<CompatibleCrossChainTransferIndex> repository)
+    {
+        var queryable = await repository.GetQueryableAsync();
+        var transactionIds = dataList.Where(t =>
+                t.MethodName == CommonConstants.CrossChainTransfer &&
+                t.TransferInfo != null && t.TransferInfo.FromCAAddress.IsNullOrEmpty())
+            .Select(t => t.Id).ToList();
+
+        if (transactionIds.IsNullOrEmpty()) return;
+
+        queryable = queryable.Where(
+            transactionIds.Select(id =>
+                    (Expression<Func<CompatibleCrossChainTransferIndex, bool>>)(t => t.Id == id))
+                .Aggregate((prev, next) => prev.Or(next)));
+
+        var needRemoveIds = queryable.ToList().Select(t => t.Id).ToList();
+        if (needRemoveIds.IsNullOrEmpty()) return;
+        dataList.RemoveAll(t => needRemoveIds.Contains(t.Id));
     }
 
     [Name("caHolderInfo")]
