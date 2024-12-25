@@ -99,7 +99,6 @@ public abstract class CAHolderTransactionProcessorBase<TEvent> : LogEventProcess
         var transactionTime = context.Block.BlockTime.ToTimestamp().Seconds;
         if (caHolderTransactionAddressIndex.TransactionTime >= transactionTime) return;
         caHolderTransactionAddressIndex.TransactionTime = transactionTime;
-        //ObjectMapper.Map(context, caHolderTransactionAddressIndex);
         await SaveEntityAsync(caHolderTransactionAddressIndex);
     }
 
@@ -282,6 +281,8 @@ public abstract class CAHolderTransactionProcessorBase<TEvent> : LogEventProcess
                 tokenInfoIndex.ExternalInfoDictionary = tokenInfo.ExternalInfo.Value
                     .Where(t => !t.Key.IsNullOrWhiteSpace())
                     .ToDictionary(item => item.Key, item => item.Value);
+
+                tokenInfoIndex.ImageUrl = TokenHelper.GetFtImageUrl(tokenInfo.ExternalInfo.Value);
             }
 
             tokenInfoIndex.ExternalInfoDictionary ??= new Dictionary<string, string>();

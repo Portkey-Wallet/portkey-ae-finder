@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Google.Protobuf.Collections;
 using PortkeyApp.Entities;
 
 namespace PortkeyApp.Common;
@@ -32,5 +33,10 @@ public static class TokenHelper
 
         long.TryParse(nftItemSymbol.Substring(nftItemSymbol.LastIndexOf("-") + 1), out long tokenId);
         return tokenId;
+    }
+    
+    public static string GetFtImageUrl(MapField<string, string> externalInfo)
+    {
+        return externalInfo.TryGetValue("__ft_image_uri", out var imageUrl) ? imageUrl : string.Empty;
     }
 }
