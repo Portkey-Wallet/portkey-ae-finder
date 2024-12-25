@@ -1,7 +1,5 @@
-using AeFinder.Sdk.Logging;
 using AeFinder.Sdk.Processor;
 using Google.Protobuf.WellKnownTypes;
-using Newtonsoft.Json;
 using Portkey.Contracts.CA;
 using PortkeyApp.Common;
 using PortkeyApp.Configs;
@@ -78,7 +76,7 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
     {
         if (!IsValidTransaction(context.ChainId, context.Transaction.To, context.Transaction.MethodName,
                 context.Transaction.Params)) return;
-
+        
         var index = new CAHolderTransactionIndex
         {
             Id = IdGenerateHelper.GetId(context.Block.BlockHash, context.Transaction.TransactionId),
@@ -86,7 +84,8 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
             FromAddress = logEvent.CaAddress.ToBase58(),
             TransactionFee = GetTransactionFee(context.Transaction.ExtraProperties),
             TransactionId = context.Transaction.TransactionId,
-            Status = context.Transaction.Status
+            Status = context.Transaction.Status,
+            Platform = logEvent.Platform
         };
 
         index.MethodName = GetMethodName(context.Transaction.MethodName, context.Transaction.Params);

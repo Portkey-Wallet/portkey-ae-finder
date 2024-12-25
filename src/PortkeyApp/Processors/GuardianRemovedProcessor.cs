@@ -56,6 +56,6 @@ public class GuardianRemovedProcessor : GuardianProcessorBase<GuardianRemoved>
 
     protected override async Task HandlerTransactionIndexAsync(GuardianRemoved eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

@@ -59,6 +59,6 @@ public class LoginGuardianRemovedProcessor : LoginGuardianProcessorBase<LoginGua
     
     protected override async Task HandlerTransactionIndexAsync(LoginGuardianRemoved eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());;
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

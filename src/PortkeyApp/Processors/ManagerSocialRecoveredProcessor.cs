@@ -6,7 +6,7 @@ using PortkeyApp.Entities;
 
 namespace PortkeyApp.Processors;
 
-public class ManagerSocialRecoveredProcessor: CAHolderTransactionProcessorBase<ManagerInfoSocialRecovered>
+public class ManagerSocialRecoveredProcessor : CAHolderTransactionProcessorBase<ManagerInfoSocialRecovered>
 {
     public override string GetContractAddress(string chainId)
     {
@@ -19,7 +19,7 @@ public class ManagerSocialRecoveredProcessor: CAHolderTransactionProcessorBase<M
         //check manager is already exist in caHolderManagerIndex
         var managerIndexId = IdGenerateHelper.GetId(context.ChainId, logEvent.Manager.ToBase58());
         var caHolderManagerIndex = await GetEntityAsync<CAHolderManagerIndex>(managerIndexId);
-        
+
         if (caHolderManagerIndex == null)
         {
             caHolderManagerIndex = new CAHolderManagerIndex
@@ -41,7 +41,7 @@ public class ManagerSocialRecoveredProcessor: CAHolderTransactionProcessorBase<M
         }
 
         await SaveEntityAsync(caHolderManagerIndex);
-        
+
         //check ca address if already exist in caHolderIndex
         var indexId = IdGenerateHelper.GetId(context.ChainId, logEvent.CaAddress.ToBase58());
         var caHolderIndex = await GetEntityAsync<CAHolderIndex>(indexId);
@@ -62,8 +62,9 @@ public class ManagerSocialRecoveredProcessor: CAHolderTransactionProcessorBase<M
         await SaveEntityAsync(caHolderIndex);
     }
 
-    protected override async Task HandlerTransactionIndexAsync(ManagerInfoSocialRecovered eventValue, LogEventContext context)
+    protected override async Task HandlerTransactionIndexAsync(ManagerInfoSocialRecovered eventValue,
+        LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

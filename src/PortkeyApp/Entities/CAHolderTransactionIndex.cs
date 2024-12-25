@@ -22,6 +22,7 @@ public class CAHolderTransactionIndex : AeFinderEntity, IAeFinderEntity
     [Keyword]
     public string ToContractAddress { get; set; }
     public Dictionary<string, long> TransactionFee { get; set; } = new();
+    public int Platform { get; set; }
 }
 
 public class TransferInfo

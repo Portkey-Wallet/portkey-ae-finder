@@ -134,6 +134,39 @@ public abstract class CAHolderTransactionProcessorBase<TEvent> : LogEventProcess
         return holder.CAAddress;
     }
 
+    protected async Task<string> ProcessCAHolderTransactionAsync(LogEventContext context, string caAddress,
+        int platform)
+    {
+        if (!IsValidTransaction(context.ChainId, context.Transaction.To, context.Transaction.MethodName,
+                context.Transaction.Params)) return null;
+        var holder = await GetEntityAsync<CAHolderIndex>(IdGenerateHelper.GetId(context.ChainId,
+            caAddress));
+        if (holder == null) return null;
+
+        var id = IdGenerateHelper.GetId(context.Block.BlockHash, context.Transaction.TransactionId);
+        var transIndex = await GetEntityAsync<CAHolderTransactionIndex>(id);
+        var transactionFee = GetTransactionFee(context.Transaction.ExtraProperties);
+        if (transIndex != null)
+        {
+            transactionFee = transIndex.TransactionFee.IsNullOrEmpty() ? transactionFee : transIndex.TransactionFee;
+        }
+
+        var index = new CAHolderTransactionIndex
+        {
+            Id = id,
+            Timestamp = context.Block.BlockTime.ToTimestamp().Seconds,
+            FromAddress = caAddress,
+            TransactionFee = transactionFee,
+            TransactionId = context.Transaction.TransactionId,
+            Status = context.Transaction.Status,
+            Platform = platform
+        };
+
+        index.MethodName = GetMethodName(context.Transaction.MethodName, context.Transaction.Params);
+        await SaveEntityAsync(index);
+        return holder.CAAddress;
+    }
+
     protected long GetFeeAmount(Dictionary<string, string> extraProperties)
     {
         var feeMap = GetTransactionFee(extraProperties);

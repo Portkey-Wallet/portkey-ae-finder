@@ -9,8 +9,7 @@ public class PortkeyConfig : IPortkeyConfig
     private static PortkeyConfigEntity GetPortkeyConfig()
     {
         var json = GetConfigurationJson(NetWork.TestNet); // modify network
-        var configEntity = JsonConvert.DeserializeObject<PortkeyConfigEntity>(json);
-        return configEntity;
+        return JsonConvert.DeserializeObject<PortkeyConfigEntity>(json);
     }
 
     public List<CAHolderTransactionInfo> GetCAHolderTransactionInfos() => PortkeyConfigEntity.CAHolderTransactionInfos;

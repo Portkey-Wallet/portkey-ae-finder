@@ -31,7 +31,7 @@ public class GuardianAddedProcessor : GuardianProcessorBase<GuardianAdded>
 
         // skip accelerate addGuardian
         if (caHolderIndex == null || caHolderIndex.Guardians == null) return;
-        
+
         if (logEvent.GuardianAdded_ == null ||
             logEvent.GuardianAdded_.IdentifierHash == null ||
             logEvent.GuardianAdded_.IdentifierHash.Value == null ||
@@ -40,10 +40,10 @@ public class GuardianAddedProcessor : GuardianProcessorBase<GuardianAdded>
         {
             _logger.LogInformation("[ProcessGuardianAddedProcessor] fail, transactionId:{0}",
                 context.Transaction.TransactionId);
-            
+
             return;
         }
-        
+
         var guardian = caHolderIndex.Guardians.FirstOrDefault(g =>
             g.IdentifierHash == logEvent.GuardianAdded_.IdentifierHash.ToHex() &&
             g.VerifierId == logEvent.GuardianAdded_.VerifierId.ToHex() &&
@@ -62,6 +62,6 @@ public class GuardianAddedProcessor : GuardianProcessorBase<GuardianAdded>
 
     protected override async Task HandlerTransactionIndexAsync(GuardianAdded eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
     }
 }

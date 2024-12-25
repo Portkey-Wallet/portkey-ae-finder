@@ -61,7 +61,7 @@ public class GuardianUpdatedProcessor : GuardianProcessorBase<GuardianUpdated>
 
     protected override async Task HandlerTransactionIndexAsync(GuardianUpdated eventValue, LogEventContext context)
     {
-        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58());
+        await ProcessCAHolderTransactionAsync(context, eventValue.CaAddress.ToBase58(), eventValue.Platform);
         ;
     }
 }
