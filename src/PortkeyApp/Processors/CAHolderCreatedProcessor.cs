@@ -16,6 +16,7 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
 
     public override async Task ProcessAsync(CAHolderCreated logEvent, LogEventContext context)
     {
+        BreakHelper.CheckBreak(context.ChainId, context.Block.BlockHeight);
         await HandlerTransactionIndexAsync(logEvent, context);
         //check manager is already exist in caHolderManagerIndex
         var managerIndexId = IdGenerateHelper.GetId(context.ChainId, logEvent.Manager.ToBase58());
@@ -40,7 +41,7 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
                 caHolderManagerIndex.CAAddresses.Add(logEvent.CaAddress.ToBase58());
             }
         }
-        
+
         await SaveEntityAsync(caHolderManagerIndex);
 
         //check ca address if already exist in caHolderIndex
@@ -68,7 +69,7 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
             Guardians = new List<Entities.Guardian>(),
             OriginChainId = context.ChainId
         };
-        
+
         await SaveEntityAsync(caHolderIndex);
     }
 
@@ -76,7 +77,7 @@ public class CAHolderCreatedProcessor : CAHolderTransactionProcessorBase<CAHolde
     {
         if (!IsValidTransaction(context.ChainId, context.Transaction.To, context.Transaction.MethodName,
                 context.Transaction.Params)) return;
-        
+
         var index = new CAHolderTransactionIndex
         {
             Id = IdGenerateHelper.GetId(context.Block.BlockHash, context.Transaction.TransactionId),

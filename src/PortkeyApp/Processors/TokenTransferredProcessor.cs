@@ -16,6 +16,7 @@ public class TokenTransferredProcessor : CAHolderTokenBalanceProcessorBase<Trans
 
     public override async Task ProcessAsync(Transferred logEvent, LogEventContext context)
     {
+        BreakHelper.CheckBreak(context.ChainId, context.Block.BlockHeight);
         await HandlerTransactionIndexAsync(logEvent, context);
         var from = await GetEntityAsync<CAHolderIndex>(
             IdGenerateHelper.GetId(context.ChainId, logEvent.From.ToBase58()));

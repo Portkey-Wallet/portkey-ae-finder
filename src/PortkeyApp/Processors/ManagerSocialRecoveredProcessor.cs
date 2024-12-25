@@ -15,6 +15,7 @@ public class ManagerSocialRecoveredProcessor : CAHolderTransactionProcessorBase<
 
     public override async Task ProcessAsync(ManagerInfoSocialRecovered logEvent, LogEventContext context)
     {
+        BreakHelper.CheckBreak(context.ChainId, context.Block.BlockHeight);
         await HandlerTransactionIndexAsync(logEvent, context);
         //check manager is already exist in caHolderManagerIndex
         var managerIndexId = IdGenerateHelper.GetId(context.ChainId, logEvent.Manager.ToBase58());

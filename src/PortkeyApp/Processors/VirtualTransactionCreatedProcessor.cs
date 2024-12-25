@@ -18,6 +18,7 @@ public class VirtualTransactionCreatedProcessor : CAHolderTransactionProcessorBa
 
     public override async Task ProcessAsync(VirtualTransactionCreated logEvent, LogEventContext context)
     {
+        BreakHelper.CheckBreak(context.ChainId, context.Block.BlockHeight);
         if (_skipMethodNames.Contains(logEvent.MethodName.ToLower()))
         {
             return;
