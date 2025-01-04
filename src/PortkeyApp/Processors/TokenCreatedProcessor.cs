@@ -1,7 +1,6 @@
 using AeFinder.Sdk.Logging;
 using AeFinder.Sdk.Processor;
 using AElf.Contracts.MultiToken;
-using AElf.Types;
 using Newtonsoft.Json;
 using PortkeyApp.Common;
 using PortkeyApp.Configs;
@@ -48,6 +47,8 @@ public class TokenCreatedProcessor : LogEventProcessorBase<TokenCreated>
                 tokenInfoIndex.ExternalInfoDictionary = logEvent.ExternalInfo.Value
                     .Where(t => !t.Key.IsNullOrWhiteSpace())
                     .ToDictionary(item => item.Key, item => item.Value);
+                
+                tokenInfoIndex.ImageUrl = TokenHelper.GetFtImageUrl(logEvent.ExternalInfo.Value);
             }
 
             tokenInfoIndex.Issuer = GetIssuerAddress(logEvent);

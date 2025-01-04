@@ -220,6 +220,8 @@ public abstract class CAHolderTokenBalanceProcessorBase<TEvent> : CAHolderTransa
                 tokenInfoIndex.ExternalInfoDictionary = tokenFromChain.ExternalInfo.Value
                     .Where(t => !t.Key.IsNullOrWhiteSpace())
                     .ToDictionary(item => item.Key, item => item.Value);
+                
+                tokenInfoIndex.ImageUrl = TokenHelper.GetFtImageUrl(tokenFromChain.ExternalInfo.Value);
             }
 
             tokenInfoIndex.ExternalInfoDictionary ??= new Dictionary<string, string>();

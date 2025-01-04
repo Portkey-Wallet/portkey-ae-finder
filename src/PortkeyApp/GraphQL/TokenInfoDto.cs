@@ -34,4 +34,5 @@ public class TokenInfoDto
     public bool IsBurnable { get; set; }
 
     public int IssueChainId { get; set; }
+    public string? ImageUrl { get; set; }
 }
