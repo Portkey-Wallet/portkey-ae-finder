@@ -11,4 +11,5 @@ public class ContractInfo
     
     public string BingoGameContractAddress { get; set; }
     public string BeangoTownContractAddress { get; set; }
+    public long ResetManagerInfoHeight { get; set; }
 }

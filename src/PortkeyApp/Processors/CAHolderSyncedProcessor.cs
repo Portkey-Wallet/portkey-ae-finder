@@ -98,8 +98,8 @@ public class CAHolderSyncedProcessor : LogEventProcessorBase<CAHolderSynced>
             CAHash = eventValue.CaHash.ToHex(),
             CAAddress = eventValue.CaAddress.ToBase58(),
             Creator = eventValue.Creator.ToBase58(),
-            ManagerInfos = managerList
         };
+        caHolderIndex.SetManagerInfos(managerList, context.ChainId, context.Block.BlockHeight);
         caHolderIndex.OriginChainId = eventValue.CreateChainId == 0
             ? await GetOriginChainIdAsync(eventValue.CaHash.ToHex())
             : ChainHelper.ConvertChainIdToBase58(eventValue.CreateChainId);
@@ -115,10 +115,10 @@ public class CAHolderSyncedProcessor : LogEventProcessorBase<CAHolderSynced>
         {
             foreach (var item in eventValue.ManagerInfosAdded.ManagerInfos)
             {
-                if (caHolderIndex.ManagerInfos.Count(m =>
+                if (caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Count(m =>
                         m.Address == item.Address.ToBase58() && m.ExtraData == item.ExtraData) == 0)
                 {
-                    caHolderIndex.ManagerInfos.Add(new Entities.ManagerInfo
+                    caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Add(new Entities.ManagerInfo
                     {
                         Address = item.Address.ToBase58(),
                         ExtraData = item.ExtraData
@@ -161,11 +161,11 @@ public class CAHolderSyncedProcessor : LogEventProcessorBase<CAHolderSynced>
         {
             foreach (var item in managerInfosRemoved)
             {
-                var removeItem = caHolderIndex.ManagerInfos.FirstOrDefault(m =>
+                var removeItem = caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).FirstOrDefault(m =>
                     m.Address == item.Address.ToBase58() && m.ExtraData == item.ExtraData);
                 if (removeItem != null)
                 {
-                    caHolderIndex.ManagerInfos.Remove(removeItem);
+                    caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Remove(removeItem);
                 }
 
                 //check manager is already exist in caHolderManagerIndex

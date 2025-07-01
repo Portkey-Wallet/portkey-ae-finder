@@ -57,17 +57,17 @@ public class CAHolderAccelerateCreationProcessor: CAHolderTransactionProcessorBa
             CAHash = logEvent.CaHash.ToHex(),
             CAAddress = logEvent.CaAddress.ToBase58(),
             Creator = logEvent.Creator.ToBase58(),
-            ManagerInfos = new List<Entities.ManagerInfo>
-            {
-                new()
-                {
-                    Address = logEvent.Manager.ToBase58(),
-                    ExtraData = logEvent.ExtraData
-                }
-            },
             Guardians = new List<Entities.Guardian>(),
             OriginChainId = ChainHelper.ConvertChainIdToBase58(logEvent.CreateChainId)
         };
+        caHolderIndex.SetManagerInfos(new List<Entities.ManagerInfo>
+        {
+            new()
+            {
+                Address = logEvent.Manager.ToBase58(),
+                ExtraData = logEvent.ExtraData
+            }
+        }, context.ChainId, context.Block.BlockHeight);
 
         await SaveEntityAsync(caHolderIndex);
     }

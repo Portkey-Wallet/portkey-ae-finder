@@ -49,9 +49,9 @@ public class ManagerAddedProcessor : CAHolderManagerProcessorBase<ManagerInfoAdd
             return;
         }
 
-        if (caHolderIndex.ManagerInfos.Count(m => m.Address == logEvent.Manager.ToBase58()) == 0)
+        if (caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Count(m => m.Address == logEvent.Manager.ToBase58()) == 0)
         {
-            caHolderIndex.ManagerInfos.Add(new Entities.ManagerInfo
+            caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Add(new Entities.ManagerInfo
             {
                 Address = logEvent.Manager.ToBase58(),
                 ExtraData = logEvent.ExtraData

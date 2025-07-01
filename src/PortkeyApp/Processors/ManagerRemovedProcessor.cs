@@ -44,10 +44,10 @@ public class ManagerRemovedProcessor : CAHolderManagerProcessorBase<ManagerInfoR
             return;
         }
 
-        var item = caHolderIndex.ManagerInfos.FirstOrDefault(m => m.Address == logEvent.Manager.ToBase58());
+        var item = caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).FirstOrDefault(m => m.Address == logEvent.Manager.ToBase58());
         if (item != null)
         {
-            caHolderIndex.ManagerInfos.Remove(item);
+            caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).Remove(item);
         }
 
         await SaveEntityAsync(caHolderIndex);

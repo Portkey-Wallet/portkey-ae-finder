@@ -466,11 +466,12 @@ public class Query
         //     n.Path("ManagerInfos").Query(q => q.Term(i => i.Field("ManagerInfos.address").Value(dto.Manager)))));
         if (!dto.Manager.IsNullOrEmpty())
         {
-            queryable = queryable.Where(t => t.ManagerInfos.Any(f => f.Address == dto.Manager));
+            queryable = queryable.Where(t => t.ManagerInfosNew.Any(f => f.Address == dto.Manager));
         }
 
         var result = queryable.OrderBy(t => t.Metadata.Block.BlockHeight).Skip(dto.SkipCount).Take(dto.MaxResultCount)
             .ToList();
+        result.ForEach(t => t.ManagerInfos = t.ManagerInfosNew);
         return objectMapper.Map<List<CAHolderIndex>, List<CAHolderManagerDto>>(result);
     }
 

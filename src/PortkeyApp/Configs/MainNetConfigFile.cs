@@ -11,7 +11,8 @@ public static partial class ConfigFile
             "CAContractAddress": "2UthYi7AHRdfrqc1YCfeQnjdChDLaas65bW4WxESMGMojFiXj9",
             "AnotherCAContractAddress": "28PcLvP41ouUd6UNGsNRvKpkFTe6am34nPy4YPsWUJnZNwUvzM",
             "TokenContractAddress": "JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE",
-            "NFTContractAddress": "2VTusxv6BN4SQDroitnWyLyQHWiwEhdWU76PPiGBqt5VbyF27J"
+            "NFTContractAddress": "2VTusxv6BN4SQDroitnWyLyQHWiwEhdWU76PPiGBqt5VbyF27J",
+            "ResetManagerInfoHeight":9999999999
         },
         {
             "ChainId": "tDVV",
@@ -21,7 +22,8 @@ public static partial class ConfigFile
             "TokenContractAddress": "7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX",
             "BingoGameContractAddress": "fU9csLqXtnSbcyRJs3fPYLFTz2S9EZowUqkYe4zrJgp1avXK2",
             "BeangoTownContractAddress": "C7ZUPUHDwG2q3jR5Mw38YoBHch2XiZdiK6pBYkdhXdGrYcXsb",
-            "NFTContractAddress": "2ZpYFeE4yWjrcKLBoj1iwbfYnbo9hK7exvfGTdqcq77QSxpzNH"
+            "NFTContractAddress": "2ZpYFeE4yWjrcKLBoj1iwbfYnbo9hK7exvfGTdqcq77QSxpzNH",
+            "ResetManagerInfoHeight":9999999999
         }
     ],
     "Inscriptions": [

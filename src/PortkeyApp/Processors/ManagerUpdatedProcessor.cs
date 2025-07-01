@@ -21,7 +21,7 @@ public class ManagerUpdatedProcessor: CAHolderManagerProcessorBase<ManagerInfoUp
         var caHolderIndex = await GetEntityAsync<CAHolderIndex>(indexId);
         if (caHolderIndex == null) return;
 
-        var managerInfo = caHolderIndex.ManagerInfos.FirstOrDefault(m => m.Address == logEvent.Manager.ToBase58());
+        var managerInfo = caHolderIndex.GetManagerInfos(context.ChainId, context.Block.BlockHeight).FirstOrDefault(m => m.Address == logEvent.Manager.ToBase58());
         if (managerInfo == null) return;
 
         managerInfo.ExtraData = logEvent.ExtraData;
